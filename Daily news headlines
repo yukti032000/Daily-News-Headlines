@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daily Business Newspaper Headlines</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+h2 {
+  margin-top: 30px;
+  color: #0d47a1;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+li {
+  margin: 6px 0;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+a:hover {
+  color: #1565c0;
+  text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 Daily Business Newspaper Headlines</h1>
+<p style="text-align:center;">Auto-updated | Click headline to open original article</p>
+
+<div id="news"></div>
+
+<script>
+const newspapers = [
+  {
+    name: "Economic Times",
+    rss: "https://economictimes.indiatimes.com/rssfeedstopstories.cms"
+  },
+  {
+    name: "Mint",
+    rss: "https://www.livemint.com/rss/news"
+  },
+  {
+    name: "Business Standard",
+    rss: "https://www.business-standard.com/rss/latest.rss"
+  },
+  {
+    name: "Financial Express",
+    rss: "https://www.financialexpress.com/feed/"
+  },
+  {
+    name: "Hindu Business Line",
+    rss: "https://www.thehindubusinessline.com/feeder/default.rss"
+  }
+];
+
+const container = document.getElementById("news");
+
+newspapers.forEach(paper => {
+  fetch(`https://api.rss2json.com/v1/api.json?rss_url=${paper.rss}`)
+    .then(response => response.json())
+    .then(data => {
+      if (!data.items) return;
+
+      let section = `<h2>${paper.name}</h2><ul>`;
+      data.items.forEach(item => {
+        section += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
+      });
+      section += "</ul>";
+
+      container.innerHTML += section;
+    })
+    .catch(() => {
+      container.innerHTML += `<p>Error loading ${paper.name}</p>`;
+    });
+});
+</script>
+
+</body>
+</html>
