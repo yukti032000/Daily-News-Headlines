@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daily Business Newspaper Headlines</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+  margin: 20px;
+}
+h1 {
+  text-align: center;
+}
+h2 {
+  margin-top: 30px;
+  color: #1a237e;
+}
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+li {
+  margin: 6px 0;
+}
+a {
+  text-decoration: none;
+  color: #000;
+}
+a:hover {
+  text-decoration: underline;
+  color: #0d47a1;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 Daily Business Newspaper Headlines</h1>
+<p style="text-align:center;">Auto-updated | Click headline to open original article</p>
+
+<div id="news"></div>
+
+<script>
+const sources = [
+  { name: "Economic Times", url: "https://economictimes.indiatimes.com/rssfeedstopstories.cms" },
+  { name: "Mint", url: "https://www.livemint.com/rss/news" },
+  { name: "Business Standard", url: "https://www.business-standard.com/rss/latest.rss" },
+  { name: "Financial Express", url: "https://www.financialexpress.com/feed/" },
+  { name: "Hindu Business Line", url: "https://www.thehindubusinessline.com/feeder/default.rss" }
+];
+
+const container = document.getElementById("news");
+
+sources.forEach(source => {
+  fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(source.url))
+    .then(res => res.text())
+    .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+    .then(data => {
+      const items = data.querySelectorAll("item");
+      let html = `<h2>${source.name}</h2><ul>`;
+      items.forEach(item => {
+        const title = item.querySelector("title")?.textContent;
+        const link = item.querySelector("link")?.textContent;
+        if (title && link) {
+          html += `<li><a href="${link}" target="_blank">${title}</a></li>`;
+        }
+      });
+      html += "</ul>";
+      container.innerHTML += html;
+    });
+});
+</script>
+
+</body>
+</html>
